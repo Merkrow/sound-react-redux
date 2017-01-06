@@ -13,11 +13,11 @@ const Nav = React.createClass({
 	},
 	render() {
 		let i = 0;
-		const { q } = this.props.fetchParams;
+		const { q } = this.props.navigation.route.params;
 		return (
 			<ul className='navigation'>
 				{this.props.GENRES.map(name => 
-					<Link key={++i} to={`/songs?q=${name}`}><li className={`navElement ${(name === q ? 'active' : '')}`} onClick={(e) => this.handleOnClick(e, name)}>{name}</li></Link>)}
+					<li className={`navElement ${(name === q ? 'active' : '')}`} onClick={(e) => this.handleOnClick(e, name)}><Link className='route' key={++i} to={`/songs?q=${name}`}>{name}</Link></li>)}
 			</ul>
 		)
 	}

@@ -86,6 +86,12 @@ body {
 	background-color: #d170e3;
 }
 
+.route {
+	font-family: 'Oswald', sans-serif;
+	color: #00b3fe;
+	text-decoration: none;
+}
+
 .player {
 	position: fixed;
 	bottom: 0;

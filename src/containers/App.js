@@ -9,12 +9,14 @@ import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
 const mapStateToProps = ({ navigation }) => ({
 	navigation
 })
+
 const routes = (route) => {
+	console.log(route);
 return (
 	<div>
 	<Route path='/'>
 		<IndexRedirect to={route} />
-		<Route path=':route' component={() => <div><Navigation /><Songs /></div>}>
+		<Route path='/:route' component={() => <div><Navigation /><Songs /></div>}>
 		</Route>
 	</Route>
 	</div>
@@ -27,7 +29,8 @@ class App extends Component {
 		const queryArr = Object.keys(params).filter(key => params[key] !== null).map(key => `${key}=${params[key]}`);
 		const route = path.join('/').concat(`?${queryArr.join('&')}`);
 		return (
-				<Router routes={routes(route)} history={browserHistory}>
+				<Router history={browserHistory}>
+				{routes(route)}
 				</Router>
 			
 		)

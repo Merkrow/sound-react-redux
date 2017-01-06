@@ -30728,20 +30728,20 @@ var Nav = _react2.default.createClass({
 		var _this = this;
 
 		var i = 0;
-		var q = this.props.fetchParams.q;
+		var q = this.props.navigation.route.params.q;
 
 		return _react2.default.createElement(
 			'ul',
 			{ className: 'navigation' },
 			this.props.GENRES.map(function (name) {
 				return _react2.default.createElement(
-					_reactRouter.Link,
-					{ key: ++i, to: '/songs?q=' + name },
+					'li',
+					{ className: 'navElement ' + (name === q ? 'active' : ''), onClick: function onClick(e) {
+							return _this.handleOnClick(e, name);
+						} },
 					_react2.default.createElement(
-						'li',
-						{ className: 'navElement ' + (name === q ? 'active' : ''), onClick: function onClick(e) {
-								return _this.handleOnClick(e, name);
-							} },
+						_reactRouter.Link,
+						{ className: 'route', key: ++i, to: '/songs?q=' + name },
 						name
 					)
 				);
@@ -31001,7 +31001,9 @@ var mapStateToProps = function mapStateToProps(_ref) {
 		navigation: navigation
 	};
 };
+
 var routes = function routes(route) {
+	console.log(route);
 	return _react2.default.createElement(
 		'div',
 		null,
@@ -31009,7 +31011,7 @@ var routes = function routes(route) {
 			_reactRouter.Route,
 			{ path: '/' },
 			_react2.default.createElement(_reactRouter.IndexRedirect, { to: route }),
-			_react2.default.createElement(_reactRouter.Route, { path: ':route', component: function component() {
+			_react2.default.createElement(_reactRouter.Route, { path: '/:route', component: function component() {
 					return _react2.default.createElement(
 						'div',
 						null,
@@ -31042,7 +31044,11 @@ var App = function (_Component) {
 				return key + '=' + params[key];
 			});
 			var route = path.join('/').concat('?' + queryArr.join('&'));
-			return _react2.default.createElement(_reactRouter.Router, { routes: routes(route), history: _reactRouter.browserHistory });
+			return _react2.default.createElement(
+				_reactRouter.Router,
+				{ history: _reactRouter.browserHistory },
+				routes(route)
+			);
 		}
 	}]);
 	return App;
@@ -31503,6 +31509,7 @@ var navigation = exports.navigation = function navigation() {
 
 	switch (action.type) {
 		case 'CHANGE_GENRE':
+			console.log(state);
 			return {
 				route: (0, _extends3.default)({}, state.route, {
 					params: {
