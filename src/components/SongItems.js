@@ -6,7 +6,7 @@ const SongItems = React.createClass({
 		this.props.actions.loadSongs(this.props.fetchParams);
 	},
 	render() { 
-		return (<div>
+		return (<div className='song-container'>
 				{this.props.songs.collection.map((item, i) => <SongItem key={i} item={item} {...this.props}/>)}
 			</div>
 		)

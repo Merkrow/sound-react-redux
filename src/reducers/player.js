@@ -1,5 +1,5 @@
 const initialState = {
-	trackId: null,
+	track: {},
 	playing: false
 }
 
@@ -7,7 +7,7 @@ export const currentTrack = ( state = initialState, action) => {
 	switch (action.type) {
 		case 'SET_TRACK':
 			return {
-				trackId: action.id,
+				track: action.item,
 				playing: true,
 			}
 		case 'PAUSE_TRACK':
@@ -22,7 +22,7 @@ export const currentTrack = ( state = initialState, action) => {
 			}
 		case 'SET_INACTIVE':
 			return {
-				trackId: null,
+				track: {},
 				playing: false
 			};
 		default:

@@ -1,6 +1,6 @@
-export const setTrack = (id) => ({
+export const setTrack = (item) => ({
 	type: 'SET_TRACK',
-	id
+	item
 })
 export const pauseTrack = () => ({
 	type: 'PAUSE_TRACK'

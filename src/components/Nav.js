@@ -17,7 +17,7 @@ const Nav = React.createClass({
 		return (
 			<ul className='navigation'>
 				{this.props.GENRES.map(name => 
-					<li className={`navElement ${(name === q ? 'active' : '')}`} key={++i} onClick={(e) => this.handleOnClick(e, name)}><Link to={`/songs?q=${name}`}>{name}</Link></li>)}
+					<Link key={++i} to={`/songs?q=${name}`}><li className={`navElement ${(name === q ? 'active' : '')}`} onClick={(e) => this.handleOnClick(e, name)}>{name}</li></Link>)}
 			</ul>
 		)
 	}

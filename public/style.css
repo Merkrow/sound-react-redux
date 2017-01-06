@@ -10,3 +10,165 @@
    width: 5px;
    display:inline-block;
 }
+body {
+	background-image: url('http://previews.123rf.com/images/hoverfly/hoverfly1112/hoverfly111200071/11500341-Abstract-colorful-repeating-background-Stock-Vector-ethnic-retro-pattern.jpg');
+}
+.navElement {
+	display: inline-block;
+	height: 40px;
+	width: 12%;
+	text-align: center;
+	font-size: 25px;
+	font-weight: bold;
+	font-family: 'Oswald', sans-serif;
+	color: #00b3fe;
+}
+
+.navigation {
+	width: 100%;
+	display:  block;
+	text-decoration: none;
+}
+
+.navElement:hover {
+	background-color: #131313;
+}
+
+.song-container {
+	width: 100%;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.song-item {
+	width: 19%;
+	height: 160px;
+	margin: 2% 2%;
+	display: inline-block;
+	text-align: bottom;
+	position: relative;
+	background-color: #85dcff;
+	border: solid 3px #18ff2a;
+	font-family: 'Lemonada', cursive;
+	line-height: 20px;
+	font-size: 12px
+}
+
+.song-item-title {
+	position: absolute;
+	bottom: 10px;
+	left: 50%;
+	width: 180px;
+	transform: translate(-50%, 0);
+}
+
+.song-item-image {
+	position: absolute;
+	cursor: pointer;
+	top: 5px;
+	height: 100px;
+	width: 100px;
+	left: 50%;
+	transform: translate(-50%, 0);
+}
+
+.song-item-image:hover {
+	opacity: 0.5;
+}
+
+.add_to_list {
+	position: absolute;
+	cursor: pointer;
+	left: 5px;
+	bottom: 5px;
+	border-radius: 50%;
+	border: none;
+	background-color: #d170e3;
+}
+
+.player {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	height: 60px;
+	width: 100%;
+	text-align: center;
+	background-color: #efdc7f;
+}
+
+.player-nav {
+	border-radius: 50%;
+	border: none;
+	height: 30px;
+	width: 30px;
+	margin-bottom: 5px;
+	background-color: #fff;
+	margin: 0 20px;
+}
+
+.player-isplaying {
+	border-radius: 50%;
+	margin-top: 10px;
+	border: solid 3px white;
+	height: 35px;
+	width: 35px;
+	background-color: #fff;
+}
+
+.player-play {
+	background-image: url('http://icons.veryicon.com/ico/System/Windows%208/Media%20Controls%20Play.ico');
+	background-size: cover;
+}
+
+.player-pause {
+	background-image: url('http://icons.iconarchive.com/icons/icons8/windows-8/512/Media-Controls-Pause-icon.png');
+	background-size: cover;
+}
+
+.track-list-container {
+	position: fixed;
+	background-color: #d8cece;
+	right: 0;
+	width: 300px;
+	top: 50px;
+}
+
+.track-list-container .track-list-item:first-child {
+	border-top: solid 2px black;
+}
+
+.track-list-container .track-list-item:last-child {
+	border-bottom: solid 2px black;
+}
+
+.track-list-container .track-list-item:not(:last-child) {
+	border-bottom: solid 2px black;
+}
+
+.track-list-item {
+	border-left: solid 2px black;
+	border-right: none;
+	position: relative;
+}
+
+
+.track-item-remove {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translate(0, -50%);
+	border-radius: 50%;
+	border: none;
+	background-color: #d170e3;
+	text-align: right;
+}
+
+.track-list-container .active {
+	background-color: #7e764e;
+}
+
+.track-list-image {
+	width: 30px;
+	margin-left: 15px;
+	height: 30px;
+}

@@ -9,6 +9,9 @@ import { songs } from '../reducers/songs';
 import { fetchParams } from '../reducers/fetchParams';
 import { currentTrack } from '../reducers/player';
 import InfiniteScroll from '../components/InfinityScroll';
+import MusicPlayer from '../containers/MusicPlayer';
+import { getStreamUrl } from '../util/util';
+import TrackListContainer from './TrackListContainer';
 
 
 const mapStateToProps = ({ songs, currentTrack, fetchParams }) => ({
@@ -24,8 +27,10 @@ const mapDispatchToProps = (dispatch) => ({ actions: bindActionCreators(actions,
 class Songs extends Component {
 	render() {
 		return (<div>
-			<SongItems {...this.props} />
+			<SongItems trackId={this.props.currentTrack.track.id} {...this.props} />
 			<InfiniteScroll />
+			{!!this.props.currentTrack.track.id ? <MusicPlayer stream={getStreamUrl(this.props.currentTrack.track.id)} /> : "" }
+			<TrackListContainer />
 			</div>
 		)
 	}

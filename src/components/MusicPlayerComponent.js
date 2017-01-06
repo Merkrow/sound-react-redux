@@ -19,7 +19,6 @@ const Player = React.createClass({
  	handlePause() {
 		ReactDOM.findDOMNode(this.refs.audio).pause();
 		this.props.actions.pauseTrack();
-		console.log(ReactDOM.findDOMNode(this.refs.audio).currentTime);
 	},
 	handlePlay() {
 		let audio = ReactDOM.findDOMNode(this.refs.audio);
@@ -28,27 +27,27 @@ const Player = React.createClass({
 	},
 	nextTrack(){
 		const { collection } = this.props.songs;
-		const { trackId } = this.props.currentTrack;
+		const { id } = this.props.currentTrack.track;
 		const { trackList } = this.props;
 		let next;
-		if(trackList.indexOf(trackId) < 0) {
-			next = getNextSong(collection, trackId);
-			this.props.actions.setTrack(next.id);
+		if(!trackList.some(item => item.id === id)) {
+			next = getNextSong(collection, id);
+			this.props.actions.setTrack(next);
 		} else {
-			next = getNextSong(trackList, trackId);
+			next = getNextSong(trackList, id);
 			this.props.actions.setTrack(next);
 		}
 	},
 	prevTrack() {
 		const { collection } = this.props.songs;
-		const { trackId } = this.props.currentTrack;
+		const { id } = this.props.currentTrack.track;
 		const { trackList } = this.props;
 		let prev;
-		if(trackList.indexOf(trackId) < 0) {
-			prev = getPrevSong(collection, trackId);
-			this.props.actions.setTrack(prev.id);
+		if(!trackList.some(item => item.id === id)) {
+			prev = getPrevSong(collection, id);
+			this.props.actions.setTrack(prev);
 		} else {
-			prev = getPrevSong(trackList, trackId);
+			prev = getPrevSong(trackList, id);
 			this.props.actions.setTrack(prev);
 		}
 	},
@@ -57,9 +56,9 @@ const Player = React.createClass({
 		return (
 		<div className='player'>
 			<audio ref='audio' autoPlay={true} src={this.props.stream}/>
-			<button onClick={() => this.prevTrack()}>Previous Track</button>
-			{ playing ? <button onClick={() => this.handlePause()}>Pause</button> : <button onClick={() => this.handlePlay()}>Play</button> }
-			<button onClick={() => this.nextTrack()}>Next Track</button>
+			<button className="player-nav" onClick={() => this.prevTrack()}>&lt;</button>
+			{ playing ? <button className='player-isplaying player-pause' onClick={() => this.handlePause()}></button> : <button className='player-isplaying player-play' onClick={() => this.handlePlay()}></button> }
+			<button className="player-nav" onClick={() => this.nextTrack()}>&gt;</button>
 			<div id="progressBar"><span ref='statusBar' id="progress"></span></div>
 		</div>
 		)

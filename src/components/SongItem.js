@@ -1,26 +1,24 @@
 import React from 'react';
-import { getStreamUrl } from '../util/util';
-import MusicPlayer from '../containers/MusicPlayer';
 
 const SongItem = React.createClass({
 	
-	handleOnClick(id) {
-		if(this.props.currentTrack.trackId === id) {
+	handleOnClick(item) {
+		if(this.props.trackId && this.props.trackId === item.id) {
 			return this.props.actions.setInactive();
 		}
-		return this.props.actions.setTrack(id);
+		return this.props.actions.setTrack(item);
 	},
-	addTrackToList(id) {
-		this.props.actions.addTrackToList(id);
+	addTrackToList(item) {
+		this.props.actions.addTrackToList(item);
 	},
 	render() {
 		const { item } = this.props;
+		const pic = item.artwork_url ? item.artwork_url : 'https://i1.sndcdn.com/artworks-000105419248-gqvhw0-large.jpg';
 		return (
 			<div className={`song-item ${this.props.currentTrack.trackId === item.id ? 'active' : ''}`}>
-				{this.props.currentTrack.trackId === item.id ? <MusicPlayer stream={getStreamUrl(item.id)} /> : "" }
-				<span className='song-item-title'>{item.title}</span>
-				<img className='item-image' src={item.artwork_url} onClick={() => this.handleOnClick(item.id)} />
-				<button onClick={() => this.addTrackToList(item.id)}>Add track to list</button>
+				<span className='song-item-title'>{item.title.split(' ').splice(0, 7).join(' ')}</span>
+				<img className='song-item-image' src={pic} onClick={() => this.handleOnClick(item)} />
+				<button className='add_to_list' onClick={() => this.addTrackToList(item)}>+</button>
 			</div>
 		)
 	}

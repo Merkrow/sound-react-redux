@@ -26,7 +26,6 @@ class App extends Component {
 		const { path, params } = this.props.navigation.route;
 		const queryArr = Object.keys(params).filter(key => params[key] !== null).map(key => `${key}=${params[key]}`);
 		const route = path.join('/').concat(`?${queryArr.join('&')}`);
-
 		return (
 				<Router routes={routes(route)} history={browserHistory}>
 				</Router>

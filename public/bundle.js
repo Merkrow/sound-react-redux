@@ -30306,7 +30306,7 @@ var addSongs = exports.addSongs = function addSongs(url) {
 	}();
 };
 
-},{"../util/util":423,"babel-runtime/helpers/asyncToGenerator":12,"babel-runtime/regenerator":20}],401:[function(require,module,exports){
+},{"../util/util":426,"babel-runtime/helpers/asyncToGenerator":12,"babel-runtime/regenerator":20}],401:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30333,10 +30333,10 @@ var changeFetchParams = exports.changeFetchParams = function changeFetchParams(p
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-var setTrack = exports.setTrack = function setTrack(id) {
+var setTrack = exports.setTrack = function setTrack(item) {
 	return {
 		type: 'SET_TRACK',
-		id: id
+		item: item
 	};
 };
 var pauseTrack = exports.pauseTrack = function pauseTrack() {
@@ -30463,15 +30463,22 @@ var addSongs = exports.addSongs = function addSongs(url) {
 	}();
 };
 
-},{"../util/util":423,"babel-runtime/helpers/asyncToGenerator":12,"babel-runtime/regenerator":20}],404:[function(require,module,exports){
+},{"../util/util":426,"babel-runtime/helpers/asyncToGenerator":12,"babel-runtime/regenerator":20}],404:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-var addTrackToList = exports.addTrackToList = function addTrackToList(id) {
+var addTrackToList = exports.addTrackToList = function addTrackToList(item) {
 	return {
 		type: 'ADD_TRACK_TO_LIST',
+		item: item
+	};
+};
+
+var removeTrackFromList = exports.removeTrackFromList = function removeTrackFromList(id) {
+	return {
+		type: 'REMOVE_TRACK_FROM_LIST',
 		id: id
 	};
 };
@@ -30509,7 +30516,7 @@ function run() {
 
 run();
 
-},{"./containers/App":411,"./store/store":421,"react":383,"react-dom":184,"react-redux":320}],406:[function(require,module,exports){
+},{"./containers/App":413,"./store/store":424,"react":383,"react-dom":184,"react-redux":320}],406:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30576,7 +30583,7 @@ var InfiniteScroll = _react2.default.createClass({
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(InfiniteScroll);
 
-},{"../actions/songActions":403,"../reducers/fetchParams":415,"../reducers/songs":419,"../util/util":423,"babel-runtime/core-js/object/assign":2,"react":383,"react-redux":320,"redux":390}],407:[function(require,module,exports){
+},{"../actions/songActions":403,"../reducers/fetchParams":418,"../reducers/songs":422,"../util/util":426,"babel-runtime/core-js/object/assign":2,"react":383,"react-redux":320,"redux":390}],407:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30611,7 +30618,6 @@ var Player = _react2.default.createClass({
 	handlePause: function handlePause() {
 		_reactDom2.default.findDOMNode(this.refs.audio).pause();
 		this.props.actions.pauseTrack();
-		console.log(_reactDom2.default.findDOMNode(this.refs.audio).currentTime);
 	},
 	handlePlay: function handlePlay() {
 		var audio = _reactDom2.default.findDOMNode(this.refs.audio);
@@ -30620,29 +30626,33 @@ var Player = _react2.default.createClass({
 	},
 	nextTrack: function nextTrack() {
 		var collection = this.props.songs.collection;
-		var trackId = this.props.currentTrack.trackId;
+		var id = this.props.currentTrack.track.id;
 		var trackList = this.props.trackList;
 
 		var next = void 0;
-		if (trackList.indexOf(trackId) < 0) {
-			next = (0, _util.getNextSong)(collection, trackId);
-			this.props.actions.setTrack(next.id);
+		if (!trackList.some(function (item) {
+			return item.id === id;
+		})) {
+			next = (0, _util.getNextSong)(collection, id);
+			this.props.actions.setTrack(next);
 		} else {
-			next = (0, _util.getNextSong)(trackList, trackId);
+			next = (0, _util.getNextSong)(trackList, id);
 			this.props.actions.setTrack(next);
 		}
 	},
 	prevTrack: function prevTrack() {
 		var collection = this.props.songs.collection;
-		var trackId = this.props.currentTrack.trackId;
+		var id = this.props.currentTrack.track.id;
 		var trackList = this.props.trackList;
 
 		var prev = void 0;
-		if (trackList.indexOf(trackId) < 0) {
-			prev = (0, _util.getPrevSong)(collection, trackId);
-			this.props.actions.setTrack(prev.id);
+		if (!trackList.some(function (item) {
+			return item.id === id;
+		})) {
+			prev = (0, _util.getPrevSong)(collection, id);
+			this.props.actions.setTrack(prev);
 		} else {
-			prev = (0, _util.getPrevSong)(trackList, trackId);
+			prev = (0, _util.getPrevSong)(trackList, id);
 			this.props.actions.setTrack(prev);
 		}
 	},
@@ -30659,30 +30669,22 @@ var Player = _react2.default.createClass({
 			_react2.default.createElement('audio', { ref: 'audio', autoPlay: true, src: this.props.stream }),
 			_react2.default.createElement(
 				'button',
-				{ onClick: function onClick() {
+				{ className: 'player-nav', onClick: function onClick() {
 						return _this.prevTrack();
 					} },
-				'Previous Track'
+				'<'
 			),
-			playing ? _react2.default.createElement(
-				'button',
-				{ onClick: function onClick() {
-						return _this.handlePause();
-					} },
-				'Pause'
-			) : _react2.default.createElement(
-				'button',
-				{ onClick: function onClick() {
-						return _this.handlePlay();
-					} },
-				'Play'
-			),
+			playing ? _react2.default.createElement('button', { className: 'player-isplaying player-pause', onClick: function onClick() {
+					return _this.handlePause();
+				} }) : _react2.default.createElement('button', { className: 'player-isplaying player-play', onClick: function onClick() {
+					return _this.handlePlay();
+				} }),
 			_react2.default.createElement(
 				'button',
-				{ onClick: function onClick() {
+				{ className: 'player-nav', onClick: function onClick() {
 						return _this.nextTrack();
 					} },
-				'Next Track'
+				'>'
 			),
 			_react2.default.createElement(
 				'div',
@@ -30695,7 +30697,7 @@ var Player = _react2.default.createClass({
 
 exports.default = Player;
 
-},{"../util/util":423,"react":383,"react-dom":184}],408:[function(require,module,exports){
+},{"../util/util":426,"react":383,"react-dom":184}],408:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30733,13 +30735,13 @@ var Nav = _react2.default.createClass({
 			{ className: 'navigation' },
 			this.props.GENRES.map(function (name) {
 				return _react2.default.createElement(
-					'li',
-					{ className: 'navElement ' + (name === q ? 'active' : ''), key: ++i, onClick: function onClick(e) {
-							return _this.handleOnClick(e, name);
-						} },
+					_reactRouter.Link,
+					{ key: ++i, to: '/songs?q=' + name },
 					_react2.default.createElement(
-						_reactRouter.Link,
-						{ to: '/songs?q=' + name },
+						'li',
+						{ className: 'navElement ' + (name === q ? 'active' : ''), onClick: function onClick(e) {
+								return _this.handleOnClick(e, name);
+							} },
 						name
 					)
 				);
@@ -30750,7 +30752,7 @@ var Nav = _react2.default.createClass({
 
 exports.default = Nav;
 
-},{"../util/util":423,"react":383,"react-router":352}],409:[function(require,module,exports){
+},{"../util/util":426,"react":383,"react-router":352}],409:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30761,48 +30763,42 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _util = require('../util/util');
-
-var _MusicPlayer = require('../containers/MusicPlayer');
-
-var _MusicPlayer2 = _interopRequireDefault(_MusicPlayer);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SongItem = _react2.default.createClass({
 	displayName: 'SongItem',
-	handleOnClick: function handleOnClick(id) {
-		if (this.props.currentTrack.trackId === id) {
+	handleOnClick: function handleOnClick(item) {
+		if (this.props.trackId && this.props.trackId === item.id) {
 			return this.props.actions.setInactive();
 		}
-		return this.props.actions.setTrack(id);
+		return this.props.actions.setTrack(item);
 	},
-	addTrackToList: function addTrackToList(id) {
-		this.props.actions.addTrackToList(id);
+	addTrackToList: function addTrackToList(item) {
+		this.props.actions.addTrackToList(item);
 	},
 	render: function render() {
 		var _this = this;
 
 		var item = this.props.item;
 
+		var pic = item.artwork_url ? item.artwork_url : 'https://i1.sndcdn.com/artworks-000105419248-gqvhw0-large.jpg';
 		return _react2.default.createElement(
 			'div',
 			{ className: 'song-item ' + (this.props.currentTrack.trackId === item.id ? 'active' : '') },
-			this.props.currentTrack.trackId === item.id ? _react2.default.createElement(_MusicPlayer2.default, { stream: (0, _util.getStreamUrl)(item.id) }) : "",
 			_react2.default.createElement(
 				'span',
 				{ className: 'song-item-title' },
-				item.title
+				item.title.split(' ').splice(0, 7).join(' ')
 			),
-			_react2.default.createElement('img', { className: 'item-image', src: item.artwork_url, onClick: function onClick() {
-					return _this.handleOnClick(item.id);
+			_react2.default.createElement('img', { className: 'song-item-image', src: pic, onClick: function onClick() {
+					return _this.handleOnClick(item);
 				} }),
 			_react2.default.createElement(
 				'button',
-				{ onClick: function onClick() {
-						return _this.addTrackToList(item.id);
+				{ className: 'add_to_list', onClick: function onClick() {
+						return _this.addTrackToList(item);
 					} },
-				'Add track to list'
+				'+'
 			)
 		);
 	}
@@ -30810,7 +30806,7 @@ var SongItem = _react2.default.createClass({
 
 exports.default = SongItem;
 
-},{"../containers/MusicPlayer":412,"../util/util":423,"react":383}],410:[function(require,module,exports){
+},{"react":383}],410:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30841,7 +30837,7 @@ var SongItems = _react2.default.createClass({
 
 		return _react2.default.createElement(
 			'div',
-			null,
+			{ className: 'song-container' },
 			this.props.songs.collection.map(function (item, i) {
 				return _react2.default.createElement(_SongItem2.default, (0, _extends3.default)({ key: i, item: item }, _this.props));
 			})
@@ -30852,6 +30848,99 @@ var SongItems = _react2.default.createClass({
 exports.default = SongItems;
 
 },{"./SongItem":409,"babel-runtime/helpers/extends":15,"react":383}],411:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _TrackListItem = require('./TrackListItem');
+
+var _TrackListItem2 = _interopRequireDefault(_TrackListItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TrackListComponent = _react2.default.createClass({
+	displayName: 'TrackListComponent',
+	render: function render() {
+		var _this = this;
+
+		return _react2.default.createElement(
+			'div',
+			{ className: 'track-list-container' },
+			this.props.trackList.map(function (item, i) {
+				return _react2.default.createElement(_TrackListItem2.default, (0, _extends3.default)({ key: -1 - i, item: item }, _this.props));
+			})
+		);
+	}
+});
+
+exports.default = TrackListComponent;
+
+},{"./TrackListItem":412,"babel-runtime/helpers/extends":15,"react":383}],412:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TrackListItem = _react2.default.createClass({
+	displayName: 'TrackListItem',
+	removeTrack: function removeTrack(id) {
+		this.props.actions.removeTrackFromList(id);
+		if (this.props.currentTrack.track.id === id) {
+			this.props.actions.setInactive();
+		}
+	},
+	startPlay: function startPlay(item) {
+		this.props.actions.setTrack(item);
+	},
+	render: function render() {
+		var _this = this;
+
+		var item = this.props.item;
+		var id = this.props.currentTrack.track.id;
+
+		var pic = item.artwork_url ? item.artwork_url : 'https://i1.sndcdn.com/artworks-000105419248-gqvhw0-large.jpg';
+		return _react2.default.createElement(
+			'div',
+			{ className: 'track-list-item ' + (item.id === id ? 'active' : ''), onClick: function onClick() {
+					return _this.startPlay(item);
+				} },
+			_react2.default.createElement(
+				'span',
+				null,
+				item.title
+			),
+			_react2.default.createElement('img', { className: 'track-list-image', src: pic }),
+			_react2.default.createElement(
+				'button',
+				{ className: 'track-item-remove', onClick: function onClick() {
+						return _this.removeTrack(item.id);
+					} },
+				'-'
+			)
+		);
+	}
+});
+
+exports.default = TrackListItem;
+
+},{"react":383}],413:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30953,7 +31042,6 @@ var App = function (_Component) {
 				return key + '=' + params[key];
 			});
 			var route = path.join('/').concat('?' + queryArr.join('&'));
-
 			return _react2.default.createElement(_reactRouter.Router, { routes: routes(route), history: _reactRouter.browserHistory });
 		}
 	}]);
@@ -30962,7 +31050,7 @@ var App = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(App);
 
-},{"../reducers/navigation":416,"./Navigation":413,"./Songs":414,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/core-js/object/keys":6,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-dom":184,"react-redux":320,"react-router":352}],412:[function(require,module,exports){
+},{"../reducers/navigation":419,"./Navigation":415,"./Songs":416,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/core-js/object/keys":6,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-dom":184,"react-redux":320,"react-router":352}],414:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31064,7 +31152,7 @@ var MusicPlayer = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(MusicPlayer);
 
-},{"../actions/playerActions":402,"../actions/trackList":404,"../components/MusicPlayerComponent":407,"../reducers/player":417,"../reducers/songs":419,"../reducers/trackList":420,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],413:[function(require,module,exports){
+},{"../actions/playerActions":402,"../actions/trackList":404,"../components/MusicPlayerComponent":407,"../reducers/player":420,"../reducers/songs":422,"../reducers/trackList":423,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],415:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31137,12 +31225,16 @@ var Navigation = _react2.default.createClass({
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Navigation);
 
-},{"../actions/NavActions":399,"../actions/fetchParamsActions":401,"../actions/songActions":403,"../components/Nav":408,"../reducers/fetchParams":415,"../reducers/navigation":416,"../util/constants":422,"babel-runtime/core-js/object/assign":2,"babel-runtime/helpers/extends":15,"react":383,"react-redux":320,"redux":390}],414:[function(require,module,exports){
+},{"../actions/NavActions":399,"../actions/fetchParamsActions":401,"../actions/songActions":403,"../components/Nav":408,"../reducers/fetchParams":418,"../reducers/navigation":419,"../util/constants":425,"babel-runtime/core-js/object/assign":2,"babel-runtime/helpers/extends":15,"react":383,"react-redux":320,"redux":390}],416:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
 
@@ -31202,6 +31294,16 @@ var _InfinityScroll = require('../components/InfinityScroll');
 
 var _InfinityScroll2 = _interopRequireDefault(_InfinityScroll);
 
+var _MusicPlayer = require('../containers/MusicPlayer');
+
+var _MusicPlayer2 = _interopRequireDefault(_MusicPlayer);
+
+var _util = require('../util/util');
+
+var _TrackListContainer = require('./TrackListContainer');
+
+var _TrackListContainer2 = _interopRequireDefault(_TrackListContainer);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -31237,8 +31339,10 @@ var Songs = function (_Component) {
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(_SongItems2.default, this.props),
-				_react2.default.createElement(_InfinityScroll2.default, null)
+				_react2.default.createElement(_SongItems2.default, (0, _extends3.default)({ trackId: this.props.currentTrack.track.id }, this.props)),
+				_react2.default.createElement(_InfinityScroll2.default, null),
+				!!this.props.currentTrack.track.id ? _react2.default.createElement(_MusicPlayer2.default, { stream: (0, _util.getStreamUrl)(this.props.currentTrack.track.id) }) : "",
+				_react2.default.createElement(_TrackListContainer2.default, null)
 			);
 		}
 	}]);
@@ -31247,7 +31351,104 @@ var Songs = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Songs);
 
-},{"../actions/SongActions":400,"../actions/playerActions":402,"../actions/trackList":404,"../components/InfinityScroll":406,"../components/SongItems":410,"../reducers/fetchParams":415,"../reducers/player":417,"../reducers/songs":419,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],415:[function(require,module,exports){
+},{"../actions/SongActions":400,"../actions/playerActions":402,"../actions/trackList":404,"../components/InfinityScroll":406,"../components/SongItems":410,"../containers/MusicPlayer":414,"../reducers/fetchParams":418,"../reducers/player":420,"../reducers/songs":422,"../util/util":426,"./TrackListContainer":417,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/extends":15,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],417:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _redux = require('redux');
+
+var _trackList = require('../actions/trackList');
+
+var trackListActions = _interopRequireWildcard(_trackList);
+
+var _trackList2 = require('../reducers/trackList');
+
+var _player = require('../reducers/player');
+
+var _playerActions = require('../actions/playerActions');
+
+var playerActions = _interopRequireWildcard(_playerActions);
+
+var _TrackListComponent = require('../components/TrackListComponent');
+
+var _TrackListComponent2 = _interopRequireDefault(_TrackListComponent);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(_ref) {
+	var trackList = _ref.trackList,
+	    currentTrack = _ref.currentTrack;
+	return {
+		currentTrack: currentTrack,
+		trackList: trackList
+	};
+};
+
+var actions = (0, _assign2.default)({}, trackListActions, playerActions);
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	return { actions: (0, _redux.bindActionCreators)(actions, dispatch) };
+};
+
+var TrackListContainer = function (_Component) {
+	(0, _inherits3.default)(TrackListContainer, _Component);
+
+	function TrackListContainer() {
+		(0, _classCallCheck3.default)(this, TrackListContainer);
+		return (0, _possibleConstructorReturn3.default)(this, (TrackListContainer.__proto__ || (0, _getPrototypeOf2.default)(TrackListContainer)).apply(this, arguments));
+	}
+
+	(0, _createClass3.default)(TrackListContainer, [{
+		key: 'render',
+		value: function render() {
+			return _react2.default.createElement(
+				'div',
+				null,
+				this.props.trackList.length > 0 ? _react2.default.createElement(_TrackListComponent2.default, this.props) : ''
+			);
+		}
+	}]);
+	return TrackListContainer;
+}(_react.Component);
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(TrackListContainer);
+
+},{"../actions/playerActions":402,"../actions/trackList":404,"../components/TrackListComponent":411,"../reducers/player":420,"../reducers/trackList":423,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],418:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31280,7 +31481,7 @@ var fetchParams = exports.fetchParams = function fetchParams() {
 	}
 };
 
-},{"babel-runtime/helpers/extends":15}],416:[function(require,module,exports){
+},{"babel-runtime/helpers/extends":15}],419:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31314,7 +31515,7 @@ var navigation = exports.navigation = function navigation() {
 	}
 };
 
-},{"babel-runtime/helpers/extends":15}],417:[function(require,module,exports){
+},{"babel-runtime/helpers/extends":15}],420:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31329,7 +31530,7 @@ var _extends3 = _interopRequireDefault(_extends2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var initialState = {
-	trackId: null,
+	track: {},
 	playing: false
 };
 
@@ -31340,7 +31541,7 @@ var currentTrack = exports.currentTrack = function currentTrack() {
 	switch (action.type) {
 		case 'SET_TRACK':
 			return {
-				trackId: action.id,
+				track: action.item,
 				playing: true
 			};
 		case 'PAUSE_TRACK':
@@ -31353,7 +31554,7 @@ var currentTrack = exports.currentTrack = function currentTrack() {
 			});
 		case 'SET_INACTIVE':
 			return {
-				trackId: null,
+				track: {},
 				playing: false
 			};
 		default:
@@ -31361,7 +31562,7 @@ var currentTrack = exports.currentTrack = function currentTrack() {
 	}
 };
 
-},{"babel-runtime/helpers/extends":15}],418:[function(require,module,exports){
+},{"babel-runtime/helpers/extends":15}],421:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31390,7 +31591,7 @@ var rootReducer = exports.rootReducer = (0, _redux.combineReducers)({
 
 });
 
-},{"./fetchParams":415,"./navigation":416,"./player":417,"./songs":419,"./trackList":420,"redux":390}],419:[function(require,module,exports){
+},{"./fetchParams":418,"./navigation":419,"./player":420,"./songs":422,"./trackList":423,"redux":390}],422:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31434,7 +31635,7 @@ var songs = exports.songs = function songs() {
 	}
 };
 
-},{"babel-runtime/helpers/extends":15,"babel-runtime/helpers/toConsumableArray":18}],420:[function(require,module,exports){
+},{"babel-runtime/helpers/extends":15,"babel-runtime/helpers/toConsumableArray":18}],423:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31461,14 +31662,19 @@ var trackList = exports.trackList = function trackList() {
 	switch (action.type) {
 		case 'ADD_TRACK_TO_LIST':
 			var set = new _set2.default(state);
-			set.add(action.id);
+			set.add(action.item);
 			return [].concat((0, _toConsumableArray3.default)(set));
+		case 'REMOVE_TRACK_FROM_LIST':
+			var newState = state.filter(function (item) {
+				return item.id !== action.id;
+			});
+			return [].concat((0, _toConsumableArray3.default)(newState));
 		default:
 			return state;
 	}
 };
 
-},{"babel-runtime/core-js/set":9,"babel-runtime/helpers/toConsumableArray":18}],421:[function(require,module,exports){
+},{"babel-runtime/core-js/set":9,"babel-runtime/helpers/toConsumableArray":18}],424:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31499,7 +31705,7 @@ var initialState = {
 		next_href: null
 	},
 	currentTrack: {
-		trackId: null,
+		track: {},
 		playing: false
 	},
 	fetchParams: {
@@ -31518,7 +31724,7 @@ var store = createStoreWithMiddleware(_reducers.rootReducer, initialState);
 
 exports.default = store;
 
-},{"../reducers/reducers":418,"redux":390,"redux-thunk":384}],422:[function(require,module,exports){
+},{"../reducers/reducers":421,"redux":390,"redux-thunk":384}],425:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31526,7 +31732,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var GENRES = exports.GENRES = ['chill', 'deep', 'dubstep', 'house', 'progressive', 'tech', 'trance', 'tropical'];
 
-},{}],423:[function(require,module,exports){
+},{}],426:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

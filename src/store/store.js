@@ -16,7 +16,7 @@ const initialState = {
 		next_href: null
 	},
 	currentTrack: {
-		trackId: null,
+		track: {},
 		playing: false
 	},
 	fetchParams: {
