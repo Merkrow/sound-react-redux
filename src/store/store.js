@@ -11,8 +11,22 @@ const initialState = {
 			}
 		}
 	},
-	songs: [],
-	player: null
+	songs: {
+		collection: [],
+		next_href: null
+	},
+	currentTrack: {
+		trackId: null,
+		playing: false
+	},
+	fetchParams: {
+		q: 'house',
+		limit: 20,
+		offset: 0,
+		linked_partitioning: 1
+	},
+	trackList: [],
+
 }
 
 const createStoreWithMiddleware = applyMiddleware(thunkMiddleware)(createStore);

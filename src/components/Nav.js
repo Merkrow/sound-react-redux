@@ -8,34 +8,12 @@ const Nav = React.createClass({
 	handleOnClick(e, name) {
 		e.preventDefault();
 		this.props.actions.changeNav(name);
+		this.props.actions.changeFetchParams({ q: name })
+		this.props.actions.loadSongs(this.props.fetchParams);
 	},
-	componentDidMount() {
-		let load = debounce(this.handleScroll, 2000);
-		window.addEventListener('scroll', load);
-	},
-	componentWillUnmount() {
-   		window.removeEventListener('scroll', debounce(this.handleScroll, 2000)());
- 	},
- 	handleScroll() {
- 		if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 200)) {
- 			const { q } = this.props.navigation.route.params;
- 			
- 			const params = {
-			q,
-			limit: limit + 20
-			}
-
-        	this.props.actions.loadSongs(params);
-    	}
- 	},
 	render() {
 		let i = 0;
-		const { q } = this.props.navigation.route.params;
-		const params = {
-			q,
-			limit: 20
-		}
-		this.props.actions.loadSongs(params);
+		const { q } = this.props.fetchParams;
 		return (
 			<ul className='navigation'>
 				{this.props.GENRES.map(name => 

@@ -10,9 +10,9 @@ export const loadSongs = (params) => async (dispatch) => {
 	}
 }
 
-export const addSongs = params => async (dispatch) => {
+export const addSongs = url => async (dispatch) => {
 	try {
-		let response = await fetch(getSongUrl(params));
+		let response = await fetch(url);
 		let payload = await response.json();
 		dispatch({ type: 'SCROLL_UPLOAD', payload })
 	} catch(error) {

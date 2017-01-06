@@ -1,4 +1,4 @@
 export const changeNav = query => ({
-	type: 'CHANGE_NAV',
+	type: 'CHANGE_GENRE',
 	query
 })

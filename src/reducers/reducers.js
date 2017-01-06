@@ -1,10 +1,15 @@
 import { combineReducers } from 'redux';
 import { navigation } from './navigation';
 import { songs } from './songs';
-import { player } from './player';
+import { currentTrack } from './player';
+import { fetchParams } from './fetchParams';
+import { trackList } from './trackList';
 
 export const rootReducer = combineReducers({
 	navigation,
 	songs,
-	player
+	currentTrack,
+	fetchParams,
+	trackList,
+
 })

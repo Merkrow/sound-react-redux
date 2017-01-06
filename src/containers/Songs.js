@@ -4,22 +4,29 @@ import { bindActionCreators } from 'redux';
 import SongItems from '../components/SongItems';
 import * as songActions from '../actions/SongActions';
 import * as playerActions from '../actions/playerActions';
+import * as trackListActions from '../actions/trackList';
 import { songs } from '../reducers/songs';
-import { player } from '../reducers/player';
+import { fetchParams } from '../reducers/fetchParams';
+import { currentTrack } from '../reducers/player';
+import InfiniteScroll from '../components/InfinityScroll';
 
-const mapStateToProps = ({ songs, player }) => ({
-	player,
-	songs
+
+const mapStateToProps = ({ songs, currentTrack, fetchParams }) => ({
+	currentTrack,
+	songs,
+	fetchParams
 })
 
-const actions = Object.assign({}, songActions, playerActions);
+const actions = Object.assign({}, songActions, playerActions, trackListActions);
 
 const mapDispatchToProps = (dispatch) => ({ actions: bindActionCreators(actions, dispatch) });
 
 class Songs extends Component {
 	render() {
-		return (
+		return (<div>
 			<SongItems {...this.props} />
+			<InfiniteScroll />
+			</div>
 		)
 	}
 }
