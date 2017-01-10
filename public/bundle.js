@@ -30590,17 +30590,15 @@ var mapStateToProps = function mapStateToProps(_ref) {
 var InfiniteScroll = _react2.default.createClass({
 	displayName: 'InfiniteScroll',
 	componentDidMount: function componentDidMount() {
-		var load = (0, _util.debounce)(this.handleScroll, 2000);
+		var load = (0, _util.debounce)(this.handleScroll, 10, true);
 
-		window.addEventListener('scroll', function () {
-			load();
-		});
+		window.addEventListener('scroll', load);
 	},
 	componentWillUnmount: function componentWillUnmount() {
 		window.removeEventListener('scroll', (0, _util.debounce)(this.handleScroll, 2000)());
 	},
 	handleScroll: function handleScroll() {
-		if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+		if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
 			this.props.actions.addSongs(this.props.songs.next_href);
 		}
 	},
@@ -30630,6 +30628,18 @@ var _util = require('../util/util');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function offsetLeft(element) {
+	var el = element;
+	var x = el.offsetLeft;
+
+	while (el.offsetParent) {
+		x += el.offsetParent.offsetLeft;
+		el = el.offsetParent;
+	}
+
+	return x;
+}
+
 var Player = _react2.default.createClass({
 	displayName: 'Player',
 	getInitialState: function getInitialState() {
@@ -30642,15 +30652,96 @@ var Player = _react2.default.createClass({
 			volume: 1
 		};
 	},
-	componentDidMount: function componentDidMount() {},
+	componentDidMount: function componentDidMount() {
+		var audioElement = _reactDom2.default.findDOMNode(this.refs.audio);
+		audioElement.addEventListener('loadedmetadata', this.handleLoadedMetadata, false);
+		audioElement.addEventListener('loadstart', this.handleLoadStart, false);
+		audioElement.addEventListener('timeupdate', this.handleTimeUpdate, false);
+	},
+	componentWillUnmount: function componentWillUnmount() {
+		var audioElement = _reactDom2.default.findDOMNode(this.refs.audio);
+		audioElement.removeEventListener('loadedmetadata', this.handleLoadedMetadata, false);
+		audioElement.removeEventListener('timeupdate', this.handleTimeUpdate, false);
+		audioElement.removeEventListener('loadstart', this.handleLoadStart, false);
+	},
+	bindSeekMouseEvents: function bindSeekMouseEvents() {
+		document.addEventListener('mousemove', this.handleSeekMouseMove);
+		document.addEventListener('mouseup', this.handleSeekMouseUp);
+	},
+	handleSeekMouseDown: function handleSeekMouseDown() {
+		this.bindSeekMouseEvents();
+		this.setState({
+			isSeeking: true
+		});
+	},
+	handleSeekMouseUp: function handleSeekMouseUp() {
+		var _this = this;
+
+		if (!this.state.isSeeking) {
+			return;
+		}
+		document.removeEventListener('mousemove', this.handleSeekMouseMove);
+		document.removeEventListener('mouseup', this.handleSeekMouseUp);
+		var currentTime = this.state.currentTime;
+
+		this.setState({
+			isSeeking: false
+		}, function () {
+			_reactDom2.default.findDOMNode(_this.refs.audio).currentTime = currentTime;
+		});
+	},
+	handleSeekMouseMove: function handleSeekMouseMove(e) {
+		var seekBar = _reactDom2.default.findDOMNode(this.refs.seekBar);
+		var diff = e.clientX - offsetLeft(seekBar);
+		var pos = diff < 0 ? 0 : diff;
+		var percent = pos / seekBar.offsetWidth;
+		percent = percent > 1 ? 1 : percent;
+		this.setState({
+			currentTime: Math.floor(percent * this.state.duration)
+		});
+	},
+	handleMouseClick: function handleMouseClick(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	},
+	handleTimeUpdate: function handleTimeUpdate(e) {
+		if (this.state.isSeeking) {
+			return;
+		}
+		var audioElement = e.currentTarget;
+		var currentTime = Math.floor(audioElement.currentTime);
+
+		if (currentTime === this.state.currentTime) {
+			return;
+		}
+		if (currentTime === this.state.duration) {
+			this.nextTrack();
+		}
+
+		this.setState({
+			currentTime: currentTime
+		});
+	},
 	handlePause: function handlePause() {
 		_reactDom2.default.findDOMNode(this.refs.audio).pause();
 		this.props.actions.pauseTrack();
+	},
+	handleLoadedMetadata: function handleLoadedMetadata() {
+		var audioElement = _reactDom2.default.findDOMNode(this.refs.audio);
+		this.setState({
+			duration: Math.floor(audioElement.duration)
+		});
 	},
 	handlePlay: function handlePlay() {
 		var audio = _reactDom2.default.findDOMNode(this.refs.audio);
 		audio.play();
 		this.props.actions.playTrack();
+	},
+	handleLoadStart: function handleLoadStart() {
+		this.setState({
+			duration: 0,
+			currentTime: 0
+		});
 	},
 	nextTrack: function nextTrack() {
 		var collection = this.props.songs.collection;
@@ -30684,8 +30775,22 @@ var Player = _react2.default.createClass({
 			this.props.actions.setTrack(prev);
 		}
 	},
+	renderDurationBar: function renderDurationBar() {
+		var _state = this.state,
+		    currentTime = _state.currentTime,
+		    duration = _state.duration;
+
+		if (duration !== 0) {
+			var width = currentTime / duration * 100;
+			return _react2.default.createElement(
+				'div',
+				{ ref: 'seekBar', onClick: this.handleMouseClick, onMouseDown: this.handleSeekMouseDown, className: 'progressBar' },
+				_react2.default.createElement('span', { style: { width: width + '%' }, ref: 'statusBar', className: 'progress' })
+			);
+		}
+	},
 	render: function render() {
-		var _this = this;
+		var _this2 = this;
 
 		var _props$currentTrack = this.props.currentTrack,
 		    playing = _props$currentTrack.playing,
@@ -30698,26 +30803,26 @@ var Player = _react2.default.createClass({
 			_react2.default.createElement(
 				'button',
 				{ className: 'player-nav', onClick: function onClick() {
-						return _this.prevTrack();
+						return _this2.prevTrack();
 					} },
 				'<'
 			),
 			playing ? _react2.default.createElement('button', { className: 'player-isplaying player-pause', onClick: function onClick() {
-					return _this.handlePause();
+					return _this2.handlePause();
 				} }) : _react2.default.createElement('button', { className: 'player-isplaying player-play', onClick: function onClick() {
-					return _this.handlePlay();
+					return _this2.handlePlay();
 				} }),
 			_react2.default.createElement(
 				'button',
 				{ className: 'player-nav', onClick: function onClick() {
-						return _this.nextTrack();
+						return _this2.nextTrack();
 					} },
 				'>'
 			),
 			_react2.default.createElement(
 				'div',
-				{ id: 'progressBar' },
-				_react2.default.createElement('span', { ref: 'statusBar', id: 'progress' })
+				{ className: 'player-seek-bar' },
+				this.renderDurationBar()
 			)
 		);
 	}
