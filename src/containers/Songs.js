@@ -28,9 +28,13 @@ const actions = Object.assign({}, songActions, playerActions, trackListActions);
 const mapDispatchToProps = (dispatch) => ({ actions: bindActionCreators(actions, dispatch) });
 
 class Songs extends Component {
+	constructor(props, context) {
+		super(props);
+		context.router;
+	}
 	render() {
 		return (<div>
-			<SongItems trackId={this.props.currentTrack.track.id} {...this.props} />
+			<SongItems trackId={this.props.currentTrack.track.id} {...this.props} query={this.context.router.location.query.q} />
 			<InfiniteScroll />
 			{!!this.props.currentTrack.track.id ? <MusicPlayer stream={getStreamUrl(this.props.currentTrack.track.id)} /> : "" }
 			<TrackListContainer />
@@ -39,5 +43,9 @@ class Songs extends Component {
 		)
 	}
 }
+
+Songs.contextTypes = {
+    router: React.PropTypes.object.isRequired
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Songs);

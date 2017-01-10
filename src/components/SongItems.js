@@ -2,10 +2,17 @@ import React from 'react';
 import SongItem from './SongItem';
 
 const SongItems = React.createClass({
-	componentWillMount() {
+	componentDidMount() {
 		const fetchParams = {
 			...this.props.fetchParams,
-			q: 'house'
+			q: this.props.query
+		}
+		this.props.actions.loadSongs(fetchParams);
+	},
+	componentWillReceiveProps() {
+		const fetchParams = {
+			...this.props.fetchParams,
+			q: this.props.query
 		}
 		this.props.actions.loadSongs(fetchParams);
 	},

@@ -20,7 +20,7 @@ const Nav = React.createClass({
 		return (
 			<ul className='navigation'>
 				{this.props.GENRES.map((name, i) => 
-					<li key={i} className={`navElement ${(name === q ? 'active' : '')}`} onClick={(e) => this.handleOnClick(e, name)}><Link className='route' to={`/songs?q=${name}`}>{name}</Link></li>)}
+					<li key={i} className={`navElement ${(name === this.props.query ? 'active' : '')}`} onClick={(e) => this.handleOnClick(e, name)}><Link className='route' to={`/songs?q=${name}`}>{name}</Link></li>)}
 			</ul>
 		)
 	}

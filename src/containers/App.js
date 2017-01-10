@@ -5,36 +5,33 @@ import ReactDOM from 'react-dom';
 import { navigation } from '../reducers/navigation';
 import { connect } from 'react-redux';
 import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
-import SC from 'soundcloud';
 
 const mapStateToProps = ({ navigation }) => ({
 	navigation
 })
 
-const routes = (route) => {
-return (
-	<div>
-	<Route path='/'>
-		<IndexRedirect to={route} />
-		<Route path='/:route' component={() => <div><Navigation /><Songs /></div>}>
-		</Route>
-	</Route>
-	</div>
-)
-}
 
 class App extends Component {
+	constructor(props, context) {
+		super(props);
+		context.router;
+	}
 	render () {
 		const { path, params } = this.props.navigation.route;
 		const queryArr = Object.keys(params).filter(key => params[key] !== null).map(key => `${key}=${params[key]}`);
 		const route = path.join('/').concat(`?${queryArr.join('&')}`);
 		return (
-				<Router history={browserHistory}>
-				{routes(route)}
-				</Router>
-			
+			<div>
+				<Navigation {...this.props} query={this.context.router.location.query.q} />
+				{this.props.children}
+			</div>
 		)
 	}
 }
+
+App.contextTypes = {
+    router: React.PropTypes.object.isRequired
+};
+
 
 export default connect(mapStateToProps)(App);

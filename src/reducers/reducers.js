@@ -5,6 +5,7 @@ import { currentTrack } from './player';
 import { fetchParams } from './fetchParams';
 import { trackList } from './trackList';
 import { loader } from './loader';
+import { authed } from './UserAuth';
 
 export const rootReducer = combineReducers({
 	navigation,
@@ -13,5 +14,6 @@ export const rootReducer = combineReducers({
 	fetchParams,
 	trackList,
 	loader,
+	authed,
 
 })
