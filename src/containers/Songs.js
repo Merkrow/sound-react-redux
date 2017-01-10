@@ -8,13 +8,16 @@ import * as trackListActions from '../actions/trackList';
 import { songs } from '../reducers/songs';
 import { fetchParams } from '../reducers/fetchParams';
 import { currentTrack } from '../reducers/player';
+import { loader } from '../reducers/loader';
 import InfiniteScroll from '../components/InfinityScroll';
 import MusicPlayer from '../containers/MusicPlayer';
 import { getStreamUrl } from '../util/util';
 import TrackListContainer from './TrackListContainer';
+import Loader from './LoaderContainer';
 
 
-const mapStateToProps = ({ songs, currentTrack, fetchParams }) => ({
+const mapStateToProps = ({ songs, currentTrack, fetchParams, loader }) => ({
+	loader,
 	currentTrack,
 	songs,
 	fetchParams
@@ -31,6 +34,7 @@ class Songs extends Component {
 			<InfiniteScroll />
 			{!!this.props.currentTrack.track.id ? <MusicPlayer stream={getStreamUrl(this.props.currentTrack.track.id)} /> : "" }
 			<TrackListContainer />
+			{ this.props.songs.collection.length === 0 || this.props.loader ? <Loader /> : '' }
 			</div>
 		)
 	}

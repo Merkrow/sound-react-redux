@@ -5,8 +5,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchParams } from '../reducers/fetchParams';
 import { songs } from '../reducers/songs';
+import * as loaderActions from '../actions/loader'
 
-const actions = Object.assign({}, songActions);
+const actions = Object.assign({}, songActions, loaderActions);
 
 const mapDispatchToProps = (dispatch) => ({ actions: bindActionCreators(actions, dispatch) });
 
@@ -18,7 +19,10 @@ const InfiniteScroll = React.createClass({
 
 	componentDidMount() {
 		let load = debounce(this.handleScroll, 2000);
-		window.addEventListener('scroll', load);
+		
+		window.addEventListener('scroll', () => {
+			load();
+		});
 	},
 	componentWillUnmount() {
    		window.removeEventListener('scroll', debounce(this.handleScroll, 2000)());

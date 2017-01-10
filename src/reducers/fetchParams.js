@@ -1,6 +1,5 @@
 const initialState = {
 	limit: 20,
-	q: 'house',
 	linked_partioning: 1,
 	offset: 0
 }

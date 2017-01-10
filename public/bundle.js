@@ -30271,33 +30271,36 @@ var addSongs = exports.addSongs = function addSongs(url) {
 					switch (_context2.prev = _context2.next) {
 						case 0:
 							_context2.prev = 0;
-							_context2.next = 3;
+
+							dispatch({ type: 'SHOW_LOADER ' });
+							_context2.next = 4;
 							return fetch(url);
 
-						case 3:
+						case 4:
 							response = _context2.sent;
-							_context2.next = 6;
+							_context2.next = 7;
 							return response.json();
 
-						case 6:
+						case 7:
 							payload = _context2.sent;
 
 							dispatch({ type: 'SCROLL_UPLOAD', payload: payload });
-							_context2.next = 13;
+							dispatch({ type: 'HIDE_LOADER ' });
+							_context2.next = 15;
 							break;
 
-						case 10:
-							_context2.prev = 10;
+						case 12:
+							_context2.prev = 12;
 							_context2.t0 = _context2['catch'](0);
 
 							dispatch({ type: 'SONGS_ERROR', error: _context2.t0 });
 
-						case 13:
+						case 15:
 						case 'end':
 							return _context2.stop();
 					}
 				}
-			}, _callee2, undefined, [[0, 10]]);
+			}, _callee2, undefined, [[0, 12]]);
 		}));
 
 		return function (_x2) {
@@ -30306,7 +30309,7 @@ var addSongs = exports.addSongs = function addSongs(url) {
 	}();
 };
 
-},{"../util/util":426,"babel-runtime/helpers/asyncToGenerator":12,"babel-runtime/regenerator":20}],401:[function(require,module,exports){
+},{"../util/util":429,"babel-runtime/helpers/asyncToGenerator":12,"babel-runtime/regenerator":20}],401:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30328,6 +30331,24 @@ var changeFetchParams = exports.changeFetchParams = function changeFetchParams(p
 };
 
 },{"babel-runtime/helpers/extends":15}],402:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var showLoader = exports.showLoader = function showLoader() {
+	return {
+		type: 'SHOW_LOADER'
+	};
+};
+
+var hideLoader = exports.hideLoader = function hideLoader() {
+	return {
+		type: 'HIDE_LOADER'
+	};
+};
+
+},{}],403:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30355,7 +30376,7 @@ var setInactive = exports.setInactive = function setInactive() {
 	};
 };
 
-},{}],403:[function(require,module,exports){
+},{}],404:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30463,7 +30484,7 @@ var addSongs = exports.addSongs = function addSongs(url) {
 	}();
 };
 
-},{"../util/util":426,"babel-runtime/helpers/asyncToGenerator":12,"babel-runtime/regenerator":20}],404:[function(require,module,exports){
+},{"../util/util":429,"babel-runtime/helpers/asyncToGenerator":12,"babel-runtime/regenerator":20}],405:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30483,7 +30504,7 @@ var removeTrackFromList = exports.removeTrackFromList = function removeTrackFrom
 	};
 };
 
-},{}],405:[function(require,module,exports){
+},{}],406:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -30516,7 +30537,7 @@ function run() {
 
 run();
 
-},{"./containers/App":413,"./store/store":424,"react":383,"react-dom":184,"react-redux":320}],406:[function(require,module,exports){
+},{"./containers/App":414,"./store/store":427,"react":383,"react-dom":184,"react-redux":320}],407:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30545,11 +30566,15 @@ var _fetchParams = require('../reducers/fetchParams');
 
 var _songs = require('../reducers/songs');
 
+var _loader = require('../actions/loader');
+
+var loaderActions = _interopRequireWildcard(_loader);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var actions = (0, _assign2.default)({}, songActions);
+var actions = (0, _assign2.default)({}, songActions, loaderActions);
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	return { actions: (0, _redux.bindActionCreators)(actions, dispatch) };
@@ -30566,7 +30591,10 @@ var InfiniteScroll = _react2.default.createClass({
 	displayName: 'InfiniteScroll',
 	componentDidMount: function componentDidMount() {
 		var load = (0, _util.debounce)(this.handleScroll, 2000);
-		window.addEventListener('scroll', load);
+
+		window.addEventListener('scroll', function () {
+			load();
+		});
 	},
 	componentWillUnmount: function componentWillUnmount() {
 		window.removeEventListener('scroll', (0, _util.debounce)(this.handleScroll, 2000)());
@@ -30583,7 +30611,7 @@ var InfiniteScroll = _react2.default.createClass({
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(InfiniteScroll);
 
-},{"../actions/songActions":403,"../reducers/fetchParams":418,"../reducers/songs":422,"../util/util":426,"babel-runtime/core-js/object/assign":2,"react":383,"react-redux":320,"redux":390}],407:[function(require,module,exports){
+},{"../actions/loader":402,"../actions/songActions":404,"../reducers/fetchParams":420,"../reducers/songs":425,"../util/util":429,"babel-runtime/core-js/object/assign":2,"react":383,"react-redux":320,"redux":390}],408:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30697,12 +30725,16 @@ var Player = _react2.default.createClass({
 
 exports.default = Player;
 
-},{"../util/util":426,"react":383,"react-dom":184}],408:[function(require,module,exports){
+},{"../util/util":429,"react":383,"react-dom":184}],409:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _react = require('react');
 
@@ -30720,28 +30752,29 @@ var Nav = _react2.default.createClass({
 	displayName: 'Nav',
 	handleOnClick: function handleOnClick(e, name) {
 		e.preventDefault();
+		var fetchParams = (0, _extends3.default)({}, this.props.fetchParams, {
+			q: name
+		});
+		this.props.actions.loadSongs(fetchParams);
 		this.props.actions.changeNav(name);
-		this.props.actions.changeFetchParams({ q: name });
-		this.props.actions.loadSongs(this.props.fetchParams);
 	},
 	render: function render() {
 		var _this = this;
 
-		var i = 0;
 		var q = this.props.navigation.route.params.q;
 
 		return _react2.default.createElement(
 			'ul',
 			{ className: 'navigation' },
-			this.props.GENRES.map(function (name) {
+			this.props.GENRES.map(function (name, i) {
 				return _react2.default.createElement(
 					'li',
-					{ className: 'navElement ' + (name === q ? 'active' : ''), onClick: function onClick(e) {
+					{ key: i, className: 'navElement ' + (name === q ? 'active' : ''), onClick: function onClick(e) {
 							return _this.handleOnClick(e, name);
 						} },
 					_react2.default.createElement(
 						_reactRouter.Link,
-						{ className: 'route', key: ++i, to: '/songs?q=' + name },
+						{ className: 'route', to: '/songs?q=' + name },
 						name
 					)
 				);
@@ -30752,7 +30785,7 @@ var Nav = _react2.default.createClass({
 
 exports.default = Nav;
 
-},{"../util/util":426,"react":383,"react-router":352}],409:[function(require,module,exports){
+},{"../util/util":429,"babel-runtime/helpers/extends":15,"react":383,"react-router":352}],410:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30784,7 +30817,7 @@ var SongItem = _react2.default.createClass({
 		var pic = item.artwork_url ? item.artwork_url : 'https://i1.sndcdn.com/artworks-000105419248-gqvhw0-large.jpg';
 		return _react2.default.createElement(
 			'div',
-			{ className: 'song-item ' + (this.props.currentTrack.trackId === item.id ? 'active' : '') },
+			{ className: 'song-item ' + (this.props.currentTrack.track.id === item.id ? 'active' : '') },
 			_react2.default.createElement(
 				'span',
 				{ className: 'song-item-title' },
@@ -30806,7 +30839,7 @@ var SongItem = _react2.default.createClass({
 
 exports.default = SongItem;
 
-},{"react":383}],410:[function(require,module,exports){
+},{"react":383}],411:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30830,7 +30863,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var SongItems = _react2.default.createClass({
 	displayName: 'SongItems',
 	componentWillMount: function componentWillMount() {
-		this.props.actions.loadSongs(this.props.fetchParams);
+		var fetchParams = (0, _extends3.default)({}, this.props.fetchParams, {
+			q: 'house'
+		});
+		this.props.actions.loadSongs(fetchParams);
 	},
 	render: function render() {
 		var _this = this;
@@ -30847,7 +30883,7 @@ var SongItems = _react2.default.createClass({
 
 exports.default = SongItems;
 
-},{"./SongItem":409,"babel-runtime/helpers/extends":15,"react":383}],411:[function(require,module,exports){
+},{"./SongItem":410,"babel-runtime/helpers/extends":15,"react":383}],412:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30885,7 +30921,7 @@ var TrackListComponent = _react2.default.createClass({
 
 exports.default = TrackListComponent;
 
-},{"./TrackListItem":412,"babel-runtime/helpers/extends":15,"react":383}],412:[function(require,module,exports){
+},{"./TrackListItem":413,"babel-runtime/helpers/extends":15,"react":383}],413:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30940,7 +30976,7 @@ var TrackListItem = _react2.default.createClass({
 
 exports.default = TrackListItem;
 
-},{"react":383}],413:[function(require,module,exports){
+},{"react":383}],414:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31003,7 +31039,6 @@ var mapStateToProps = function mapStateToProps(_ref) {
 };
 
 var routes = function routes(route) {
-	console.log(route);
 	return _react2.default.createElement(
 		'div',
 		null,
@@ -31056,7 +31091,74 @@ var App = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(App);
 
-},{"../reducers/navigation":419,"./Navigation":415,"./Songs":416,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/core-js/object/keys":6,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-dom":184,"react-redux":320,"react-router":352}],414:[function(require,module,exports){
+},{"../reducers/navigation":422,"./Navigation":417,"./Songs":418,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/core-js/object/keys":6,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-dom":184,"react-redux":320,"react-router":352}],415:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _getPrototypeOf = require("babel-runtime/core-js/object/get-prototype-of");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = require("babel-runtime/helpers/classCallCheck");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require("babel-runtime/helpers/createClass");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = require("babel-runtime/helpers/possibleConstructorReturn");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require("babel-runtime/helpers/inherits");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Loader = function (_Component) {
+	(0, _inherits3.default)(Loader, _Component);
+
+	function Loader() {
+		(0, _classCallCheck3.default)(this, Loader);
+		return (0, _possibleConstructorReturn3.default)(this, (Loader.__proto__ || (0, _getPrototypeOf2.default)(Loader)).apply(this, arguments));
+	}
+
+	(0, _createClass3.default)(Loader, [{
+		key: "render",
+		value: function render() {
+			return _react2.default.createElement(
+				"div",
+				{ className: "circ" },
+				_react2.default.createElement(
+					"div",
+					{ className: "load" },
+					"Loading..."
+				),
+				_react2.default.createElement("div", { className: "hands" }),
+				_react2.default.createElement("div", { className: "body" }),
+				_react2.default.createElement(
+					"div",
+					{ className: "head" },
+					_react2.default.createElement("div", { className: "eye" })
+				)
+			);
+		}
+	}]);
+	return Loader;
+}(_react.Component);
+
+exports.default = Loader;
+
+},{"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383}],416:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31158,7 +31260,7 @@ var MusicPlayer = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(MusicPlayer);
 
-},{"../actions/playerActions":402,"../actions/trackList":404,"../components/MusicPlayerComponent":407,"../reducers/player":420,"../reducers/songs":422,"../reducers/trackList":423,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],415:[function(require,module,exports){
+},{"../actions/playerActions":403,"../actions/trackList":405,"../components/MusicPlayerComponent":408,"../reducers/player":423,"../reducers/songs":425,"../reducers/trackList":426,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],417:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31231,7 +31333,7 @@ var Navigation = _react2.default.createClass({
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Navigation);
 
-},{"../actions/NavActions":399,"../actions/fetchParamsActions":401,"../actions/songActions":403,"../components/Nav":408,"../reducers/fetchParams":418,"../reducers/navigation":419,"../util/constants":425,"babel-runtime/core-js/object/assign":2,"babel-runtime/helpers/extends":15,"react":383,"react-redux":320,"redux":390}],416:[function(require,module,exports){
+},{"../actions/NavActions":399,"../actions/fetchParamsActions":401,"../actions/songActions":404,"../components/Nav":409,"../reducers/fetchParams":420,"../reducers/navigation":422,"../util/constants":428,"babel-runtime/core-js/object/assign":2,"babel-runtime/helpers/extends":15,"react":383,"react-redux":320,"redux":390}],418:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31296,6 +31398,8 @@ var _fetchParams = require('../reducers/fetchParams');
 
 var _player = require('../reducers/player');
 
+var _loader = require('../reducers/loader');
+
 var _InfinityScroll = require('../components/InfinityScroll');
 
 var _InfinityScroll2 = _interopRequireDefault(_InfinityScroll);
@@ -31310,6 +31414,10 @@ var _TrackListContainer = require('./TrackListContainer');
 
 var _TrackListContainer2 = _interopRequireDefault(_TrackListContainer);
 
+var _LoaderContainer = require('./LoaderContainer');
+
+var _LoaderContainer2 = _interopRequireDefault(_LoaderContainer);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -31317,8 +31425,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mapStateToProps = function mapStateToProps(_ref) {
 	var songs = _ref.songs,
 	    currentTrack = _ref.currentTrack,
-	    fetchParams = _ref.fetchParams;
+	    fetchParams = _ref.fetchParams,
+	    loader = _ref.loader;
 	return {
+		loader: loader,
 		currentTrack: currentTrack,
 		songs: songs,
 		fetchParams: fetchParams
@@ -31348,7 +31458,8 @@ var Songs = function (_Component) {
 				_react2.default.createElement(_SongItems2.default, (0, _extends3.default)({ trackId: this.props.currentTrack.track.id }, this.props)),
 				_react2.default.createElement(_InfinityScroll2.default, null),
 				!!this.props.currentTrack.track.id ? _react2.default.createElement(_MusicPlayer2.default, { stream: (0, _util.getStreamUrl)(this.props.currentTrack.track.id) }) : "",
-				_react2.default.createElement(_TrackListContainer2.default, null)
+				_react2.default.createElement(_TrackListContainer2.default, null),
+				this.props.songs.collection.length === 0 || this.props.loader ? _react2.default.createElement(_LoaderContainer2.default, null) : ''
 			);
 		}
 	}]);
@@ -31357,7 +31468,7 @@ var Songs = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Songs);
 
-},{"../actions/SongActions":400,"../actions/playerActions":402,"../actions/trackList":404,"../components/InfinityScroll":406,"../components/SongItems":410,"../containers/MusicPlayer":414,"../reducers/fetchParams":418,"../reducers/player":420,"../reducers/songs":422,"../util/util":426,"./TrackListContainer":417,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/extends":15,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],417:[function(require,module,exports){
+},{"../actions/SongActions":400,"../actions/playerActions":403,"../actions/trackList":405,"../components/InfinityScroll":407,"../components/SongItems":411,"../containers/MusicPlayer":416,"../reducers/fetchParams":420,"../reducers/loader":421,"../reducers/player":423,"../reducers/songs":425,"../util/util":429,"./LoaderContainer":415,"./TrackListContainer":419,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/extends":15,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],419:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31454,7 +31565,7 @@ var TrackListContainer = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(TrackListContainer);
 
-},{"../actions/playerActions":402,"../actions/trackList":404,"../components/TrackListComponent":411,"../reducers/player":420,"../reducers/trackList":423,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],418:[function(require,module,exports){
+},{"../actions/playerActions":403,"../actions/trackList":405,"../components/TrackListComponent":412,"../reducers/player":423,"../reducers/trackList":426,"babel-runtime/core-js/object/assign":2,"babel-runtime/core-js/object/get-prototype-of":5,"babel-runtime/helpers/classCallCheck":13,"babel-runtime/helpers/createClass":14,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/possibleConstructorReturn":17,"react":383,"react-redux":320,"redux":390}],420:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31470,7 +31581,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var initialState = {
 	limit: 20,
-	q: 'house',
 	linked_partioning: 1,
 	offset: 0
 };
@@ -31487,7 +31597,27 @@ var fetchParams = exports.fetchParams = function fetchParams() {
 	}
 };
 
-},{"babel-runtime/helpers/extends":15}],419:[function(require,module,exports){
+},{"babel-runtime/helpers/extends":15}],421:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var loader = exports.loader = function loader() {
+	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	var action = arguments[1];
+
+	switch (action.type) {
+		case 'SHOW_LOADER':
+			return true;
+		case 'HIDE_LOADER':
+			return false;
+		default:
+			return state;
+	}
+};
+
+},{}],422:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31509,7 +31639,6 @@ var navigation = exports.navigation = function navigation() {
 
 	switch (action.type) {
 		case 'CHANGE_GENRE':
-			console.log(state);
 			return {
 				route: (0, _extends3.default)({}, state.route, {
 					params: {
@@ -31522,7 +31651,7 @@ var navigation = exports.navigation = function navigation() {
 	}
 };
 
-},{"babel-runtime/helpers/extends":15}],420:[function(require,module,exports){
+},{"babel-runtime/helpers/extends":15}],423:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31569,7 +31698,7 @@ var currentTrack = exports.currentTrack = function currentTrack() {
 	}
 };
 
-},{"babel-runtime/helpers/extends":15}],421:[function(require,module,exports){
+},{"babel-runtime/helpers/extends":15}],424:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31589,16 +31718,19 @@ var _fetchParams = require('./fetchParams');
 
 var _trackList = require('./trackList');
 
+var _loader = require('./loader');
+
 var rootReducer = exports.rootReducer = (0, _redux.combineReducers)({
 	navigation: _navigation.navigation,
 	songs: _songs.songs,
 	currentTrack: _player.currentTrack,
 	fetchParams: _fetchParams.fetchParams,
-	trackList: _trackList.trackList
+	trackList: _trackList.trackList,
+	loader: _loader.loader
 
 });
 
-},{"./fetchParams":418,"./navigation":419,"./player":420,"./songs":422,"./trackList":423,"redux":390}],422:[function(require,module,exports){
+},{"./fetchParams":420,"./loader":421,"./navigation":422,"./player":423,"./songs":425,"./trackList":426,"redux":390}],425:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31642,7 +31774,7 @@ var songs = exports.songs = function songs() {
 	}
 };
 
-},{"babel-runtime/helpers/extends":15,"babel-runtime/helpers/toConsumableArray":18}],423:[function(require,module,exports){
+},{"babel-runtime/helpers/extends":15,"babel-runtime/helpers/toConsumableArray":18}],426:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31681,7 +31813,7 @@ var trackList = exports.trackList = function trackList() {
 	}
 };
 
-},{"babel-runtime/core-js/set":9,"babel-runtime/helpers/toConsumableArray":18}],424:[function(require,module,exports){
+},{"babel-runtime/core-js/set":9,"babel-runtime/helpers/toConsumableArray":18}],427:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31716,7 +31848,6 @@ var initialState = {
 		playing: false
 	},
 	fetchParams: {
-		q: 'house',
 		limit: 20,
 		offset: 0,
 		linked_partitioning: 1
@@ -31731,7 +31862,7 @@ var store = createStoreWithMiddleware(_reducers.rootReducer, initialState);
 
 exports.default = store;
 
-},{"../reducers/reducers":421,"redux":390,"redux-thunk":384}],425:[function(require,module,exports){
+},{"../reducers/reducers":424,"redux":390,"redux-thunk":384}],428:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31739,7 +31870,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var GENRES = exports.GENRES = ['chill', 'deep', 'dubstep', 'house', 'progressive', 'tech', 'trance', 'tropical'];
 
-},{}],426:[function(require,module,exports){
+},{}],429:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31827,4 +31958,4 @@ var getPrevSong = exports.getPrevSong = function getPrevSong(arr, id) {
 	return arr[index - 1];
 };
 
-},{"babel-runtime/core-js/object/keys":6}]},{},[405]);
+},{"babel-runtime/core-js/object/keys":6}]},{},[406]);

@@ -20,7 +20,6 @@ const initialState = {
 		playing: false
 	},
 	fetchParams: {
-		q: 'house',
 		limit: 20,
 		offset: 0,
 		linked_partitioning: 1

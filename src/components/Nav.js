@@ -7,17 +7,20 @@ let limit = 20;
 const Nav = React.createClass({
 	handleOnClick(e, name) {
 		e.preventDefault();
+		const fetchParams = {
+			...this.props.fetchParams,
+			q: name
+		}
+		this.props.actions.loadSongs(fetchParams);
 		this.props.actions.changeNav(name);
-		this.props.actions.changeFetchParams({ q: name })
-		this.props.actions.loadSongs(this.props.fetchParams);
+
 	},
 	render() {
-		let i = 0;
 		const { q } = this.props.navigation.route.params;
 		return (
 			<ul className='navigation'>
-				{this.props.GENRES.map(name => 
-					<li className={`navElement ${(name === q ? 'active' : '')}`} onClick={(e) => this.handleOnClick(e, name)}><Link className='route' key={++i} to={`/songs?q=${name}`}>{name}</Link></li>)}
+				{this.props.GENRES.map((name, i) => 
+					<li key={i} className={`navElement ${(name === q ? 'active' : '')}`} onClick={(e) => this.handleOnClick(e, name)}><Link className='route' to={`/songs?q=${name}`}>{name}</Link></li>)}
 			</ul>
 		)
 	}

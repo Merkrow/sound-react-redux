@@ -11,7 +11,6 @@ const mapStateToProps = ({ navigation }) => ({
 })
 
 const routes = (route) => {
-	console.log(route);
 return (
 	<div>
 	<Route path='/'>

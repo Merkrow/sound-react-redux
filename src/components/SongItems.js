@@ -3,7 +3,11 @@ import SongItem from './SongItem';
 
 const SongItems = React.createClass({
 	componentWillMount() {
-		this.props.actions.loadSongs(this.props.fetchParams);
+		const fetchParams = {
+			...this.props.fetchParams,
+			q: 'house'
+		}
+		this.props.actions.loadSongs(fetchParams);
 	},
 	render() { 
 		return (<div className='song-container'>
