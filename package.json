@@ -29,6 +29,7 @@
     "redux-async-await": "^1.0.1",
     "redux-thunk": "^2.1.0",
     "regenerator": "^0.9.5",
+    "soundcloud": "^3.1.2",
     "watchify": "^3.7.0"
   },
   "devDependencies": {

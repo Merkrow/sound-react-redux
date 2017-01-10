@@ -1,19 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { getNextSong, getPrevSong } from '../util/util';
-
-
-function offsetLeft(element) {
-  let el = element;
-  let x = el.offsetLeft;
-
-  while (el.offsetParent) {
-    x += el.offsetParent.offsetLeft;
-    el = el.offsetParent;
-  }
-
-  return x;
-}
+import { getNextSong, getPrevSong, offsetLeft } from '../util/util';
 
 const Player = React.createClass({
 	getInitialState() {

@@ -20,8 +20,11 @@ const mapDispatchToProps = (dispatch) => ({ actions: bindActionCreators(actions,
 
 const Navigation = React.createClass({
 	render() {
-		return (
-			<Nav GENRES={GENRES} {...this.props} />
+		console.log(this.props.route);
+		return (<div>
+				<Nav GENRES={GENRES} {...this.props} />
+				<button>USER LOGIN</button>
+			</div>
 		)
 	}
 })

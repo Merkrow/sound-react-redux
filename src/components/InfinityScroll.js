@@ -18,17 +18,26 @@ const mapStateToProps = ({ songs }) => ({
 const InfiniteScroll = React.createClass({
 
 	componentDidMount() {
-		let load = debounce(this.handleScroll, 10, true);
-		
-		window.addEventListener('scroll', load);
+		let load = debounce(this.handleScroll, 3000);
+		let loader = debounce(this.loaderScroll, 0, true);
+		window.addEventListener('scroll', () => {
+			loader();
+			load();
+		});
 	},
 	componentWillUnmount() {
-   		window.removeEventListener('scroll', debounce(this.handleScroll, 2000)());
+   		window.removeEventListener('scroll', load);
+ 	},
+ 	loaderScroll() {
+ 		if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight + 10)) {
+        	this.props.actions.showLoader();
+    	}
  	},
  	handleScroll() {
  		if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 100)) {
         	this.props.actions.addSongs(this.props.songs.next_href);
     	}
+    	this.props.actions.hideLoader();
  	},
 	render() {
 		return <div />;

@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import { navigation } from '../reducers/navigation';
 import { connect } from 'react-redux';
 import { Router, Route, browserHistory, IndexRedirect } from 'react-router';
+import SC from 'soundcloud';
 
 const mapStateToProps = ({ navigation }) => ({
 	navigation

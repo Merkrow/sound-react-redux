@@ -26,18 +26,7 @@ export const debounce = (func, wait, immediate) => {
 		if (callNow) func.apply(context, args);
 	};
 };
-export const getCurrentSong = (arr,id) => {
-	let index = 0;
-	arr.map((item, i) => {
-		if(typeof item === 'number') {
-			index = item === id ? i : index;
-			return item;
-		}
-		index = item.id === id ? i : index;
-		return item;
-	})
-	return arr[index];
-}
+
 export const getNextSong = (arr, id) => {
 	let index = 0;
 	arr.map((item, i) => {
@@ -68,4 +57,16 @@ export const getPrevSong = (arr, id) => {
 		return arr[arr.length-1];
 	}
 	return arr[index-1];
+}
+
+export const offsetLeft = (element) => {
+  let el = element;
+  let x = el.offsetLeft;
+
+  while (el.offsetParent) {
+    x += el.offsetParent.offsetLeft;
+    el = el.offsetParent;
+  }
+
+  return x;
 }
